@@ -3,6 +3,6 @@
 import math
 
 
-def floor(n: float) -> float:
+def floor(n: float) -> int:
     """a type-annotated function floor"""
     return math.floor(n)
