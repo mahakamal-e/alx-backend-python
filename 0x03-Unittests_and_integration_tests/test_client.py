@@ -28,43 +28,41 @@ class TestGithubOrgClient(unittest.TestCase):
 
         expected_url = client.ORG_URL.format(org=org_name)
         mock_get_json.assert_called_once_with(expected_url)
-
         self.assertEqual(result, expected_response)
 
     @patch('client.GithubOrgClient.org')
     def test_public_repos_url(self, mock_org):
         """Test the _public_repos_url property"""
 
-        mock_org.return_value = {"repos_url": "https://api.github.com/orgs/{org}/repos"}
-        
+        mock_org.return_value = {
+            "repos_url": "https://api.github.com/orgs/{org}/repos"
+        }
+
         client = GithubOrgClient("google")
-        
         result = client._public_repos_url
-        
+
         expected_url = "https://api.github.com/orgs/google/repos"
         self.assertEqual(result, expected_url)
-        
         mock_org.assert_called_once()
 
     @patch('client.get_json')
     @patch('client.GithubOrgClient._public_repos_url', new_callable=property)
     def test_public_repos(self, mock_public_repos_url, mock_get_json):
         """Test the public_repos method"""
-        
+
         mock_get_json.return_value = [
             {"name": "repo1", "license": {"key": "apache2"}},
             {"name": "repo2", "license": {"key": "mit"}}
         ]
-        mock_public_repos_url.return_value = "https://api.github.com/orgs/google/repos"
-        
-        client = GithubOrgClient("google")
-        
-        expected_repos = ["repo1", "repo2"]
+        mock_public_repos_url.return_value = (
+            "https://api.github.com/orgs/google/repos"
+        )
 
+        client = GithubOrgClient("google")
+        expected_repos = ["repo1"]
         result = client.public_repos("apache2")
-        
-        self.assertEqual(result, ["repo1"])
-        
+
+        self.assertEqual(result, expected_repos)
         mock_get_json.assert_called_once()
         mock_public_repos_url.assert_called_once()
 
@@ -74,9 +72,8 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     def test_has_license(self, repo, license_key, expected):
         """Test the has_license method"""
-        
+
         result = GithubOrgClient.has_license(repo, license_key)
-        
         self.assertEqual(result, expected)
 
 
