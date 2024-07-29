@@ -2,7 +2,7 @@
 """Test for GithubOrgClient"""
 import unittest
 from unittest.mock import patch
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
 from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
 
@@ -59,10 +59,30 @@ class TestGithubOrgClient(unittest.TestCase):
         )
 
         client = GithubOrgClient("google")
-        expected_repos = ["repo1"]
+        result = client.public_repos()
+
+        self.assertEqual(result, ["repo1"])
+        mock_get_json.assert_called_once()
+        mock_public_repos_url.assert_called_once()
+
+    @patch('client.get_json')
+    @patch('client.GithubOrgClient._public_repos_url', new_callable=property)
+    def test_public_repos_with_license(
+            self, mock_public_repos_url, mock_get_json):
+        """Test the public_repos method with a specific license"""
+
+        mock_get_json.return_value = [
+            {"name": "repo1", "license": {"key": "apache2"}},
+            {"name": "repo2", "license": {"key": "mit"}}
+        ]
+        mock_public_repos_url.return_value = (
+            "https://api.github.com/orgs/google/repos"
+        )
+
+        client = GithubOrgClient("google")
         result = client.public_repos("apache2")
 
-        self.assertEqual(result, expected_repos)
+        self.assertEqual(result, ["repo1"])
         mock_get_json.assert_called_once()
         mock_public_repos_url.assert_called_once()
 
