@@ -29,25 +29,30 @@ class TestAccessNestedMap(unittest.TestCase):
 
 class TestGetJson(unittest.TestCase):
     """Define the TestGetJson(unittest.TestCase) class """
+
+    @parameterized.expand([
+        ("http://example.com", {"payload": True}),
+        ("http://holberton.io", {"payload": False}),
+    ])
     @patch('requests.get')
-    def test_get_json(self, mock_get):
-        test_cases = [
-            ("http://example.com", {"payload": True}),
-            ("http://holberton.io", {"payload": False}),
-        ]
+    def test_get_json(self, mock_get, test_url, test_payload):
+        """Test get_json function to ensure it returns the expected result."""
+        # Configure the mock to return the test_payload
+        mock_response = Mock()
+        mock_response.json.return_value = test_payload
+        mock_get.return_value = mock_response
 
-        for test_url, test_payload in test_cases:
-            mock_response = Mock()
-            mock_response.json.return_value = test_payload
-            mock_get.return_value = mock_response
+        # Call the function with the test_url
+        data = get_json(test_url)
 
-            data = get_json(test_url)
+        # Assert that the mocked get method was called exactly once with test_url
+        mock_get.assert_called_once_with(test_url)
 
-            mock_get.assert_called_once_with(test_url)
+        # Assert that the output of get_json is equal to test_payload
+        self.assertEqual(data, test_payload)
 
-            self.assertEqual(data, test_payload)
-
-            mock_get.reset_mock()
+        # Reset the mock for the next iteration
+        mock_get.reset_mock()
 
 
 if __name__ == '__main__':
