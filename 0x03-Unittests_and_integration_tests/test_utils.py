@@ -44,13 +44,11 @@ class TestGetJson(unittest.TestCase):
 
 
 class TestMemoize(unittest.TestCase):
-    """Test the memoize decorator."""
-
+    """Class to test memoize decorator"""
     def test_memoize(self):
-        """Test that the memoize decorator caches results correctly."""
-
+        """Test memoize decorator"""
         class TestClass:
-            """ test class"""
+            """Implement test class"""
             def a_method(self):
                 return 42
 
@@ -66,6 +64,7 @@ class TestMemoize(unittest.TestCase):
             self.assertEqual(my_test.a_property(), 42)
 
             a_mock.assert_called_once()
+
 
 
 if __name__ == '__main__':
