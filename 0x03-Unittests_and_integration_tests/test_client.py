@@ -31,7 +31,9 @@ class TestGithubOrgClient(unittest.TestCase):
             'org',
             new_callable=PropertyMock
         ) as mock_org:
-            mock_org.return_value = {"repos_url": "https://api.github.com/orgs/google/repos"}
+            mock_org.return_value = {
+                "repos_url": "https://api.github.com/orgs/google/repos"
+            }
 
             client = GithubOrgClient("google")
             self.assertEqual(
@@ -74,6 +76,7 @@ class TestGithubOrgClient(unittest.TestCase):
             expected_result
         )
 
+
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration tests for the GithubOrgClient class using fixtures."""
 
@@ -83,7 +86,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher = patch('client.get_json')
         cls.mock_get_json = cls.get_patcher.start()
 
-        from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
+        from fixtures import (org_payload, repos_payload, expected_repos,
+                              apache2_repos)
         cls.org_payload = org_payload
         cls.repos_payload = repos_payload
         cls.expected_repos = expected_repos
@@ -100,10 +104,14 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher.stop()
 
     @parameterized.expand([
-        ('public_repos', 'https://api.github.com/orgs/google/repos', 'MIT', ['repo1']),
-        ('public_repos_with_license', 'https://api.github.com/orgs/google/repos', 'apache-2.0', ['apache2_repo'])
+        ('public_repos', 'https://api.github.com/orgs/google/repos', 'MIT',
+         ['repo1']),
+        ('public_repos_with_license',
+         'https://api.github.com/orgs/google/repos', 'apache-2.0',
+         ['apache2_repo'])
     ])
-    def test_public_repos(self, test_name, repos_url, license_key, expected_repos):
+    def test_public_repos(self, test_name, repos_url, license_key,
+                          expected_repos):
         """Test the public_repos method of GithubOrgClient using fixtures."""
         with patch.object(
             GithubOrgClient,
