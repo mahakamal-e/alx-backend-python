@@ -10,37 +10,28 @@ from utils import get_json
 
 class TestGithubOrgClient(unittest.TestCase):
     """Test suite for the GithubOrgClient class."""
-
     @parameterized.expand([
-        ('google',),
-        ('abc',)
+        'google',
+        'abc'
     ])
     @patch('client.get_json')
-    def test_org(self, org_name, mock_get_json):
+    def test_org(self, org_name, get_mock):
         """Test that GithubOrgClient.org returns the correct value."""
-        mock_get_json.return_value = {"org_name": org_name}
+        get_mock.return_value = lambda: {"org_name": org_name}
 
-        client = GithubOrgClient(org_name)
-        self.assertEqual(client.org(), {"org_name": org_name})
-        mock_get_json.assert_called_once()
+        github_client = GithubOrgClient(org_name)
+        self.assertEqual(github_client.org(), {"org_name": org_name})
+        get_mock.assert_called_once()
 
     def test_public_repos_url(self):
-        """Test the _public_repos_url property of GithubOrgClient."""
-        with patch.object(
-            GithubOrgClient,
-            'org',
-            new_callable=PropertyMock
-        ) as mock_org:
-            mock_org.return_value = {
-                "repos_url": "https://api.github.com/orgs/google/repos"
-            }
+        """Test public_repos_url property"""
+        with patch.object(GithubOrgClient,
+                          'org', new_callable=PropertyMock) as org_mock:
+            org_mock.return_value = {"repos_url": "google"}
 
-            client = GithubOrgClient("google")
-            self.assertEqual(
-                client._public_repos_url,
-                "https://api.github.com/orgs/google/repos"
-            )
-
+            github_client = GithubOrgClient("google")
+            self.assertEqual(github_client._public_repos_url, "google")
+    
     @patch('client.get_json')
     def test_public_repos(self, mock_get_json):
         """Test the public_repos method of GithubOrgClient."""
