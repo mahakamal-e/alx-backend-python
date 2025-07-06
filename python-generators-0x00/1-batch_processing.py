@@ -12,7 +12,7 @@ def stream_users_in_batches(batch_size):
         database='ALX_prodev'    
     )
     try:
-        cursor = connection.cursor(dictionary=True, buffered = True)
+        cursor = connection.cursor(dictionary=True)
         cursor.execute("SELECT * FROM user_data")
         while True:
             batch = cursor.fetchmany(batch_size)
