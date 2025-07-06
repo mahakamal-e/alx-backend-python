@@ -56,14 +56,14 @@ def create_table(connection):
 
 
 def insert_data(connection, data):
-    """Insert data from CSV file INTO table user_data """
+    """Insert data from CSV file into table user_data"""
+    import csv
+    from uuid import uuid4
+
     cursor = connection.cursor()
     with open(data, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            cursor.execute("SELECT user_id FROM user_data WHERE user_id = %s", (row['user_id'],))
-            if cursor.fetchone():
-                continue
             cursor.execute(
                 "INSERT INTO user_data (user_id, name, email, age) VALUES (%s, %s, %s, %s)",
                 (str(uuid4()), row['name'], row['email'], row['age'])
