@@ -19,7 +19,7 @@ def stream_users_in_batches(batch_size):
             if not batch:
                 break
             for user in batch:
-                yield user  # هنا بترجع يوزر يوزر مش دفعة كاملة
+                yield user
     finally:
         cursor.close()
         connection.close()
