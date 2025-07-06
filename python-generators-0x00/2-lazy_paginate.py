@@ -2,30 +2,27 @@
 import mysql.connector
 
 
-def stream_user_ages():
-    """ Generator that streams user ages """
+def paginate_users(page_size, offset):
+    """Fetch a page of users from the database starting at the offset"""
     connection = mysql.connector.connect(
         host='localhost',
         user='root',
         password='',
         database='ALX_prodev'
     )
-    try:
-        cursor = connection.cursor(dictionary=True, buffered=True)
-        cursor.execute("SELECT age FROM user_data")
-        for row in cursor:
-            yield row['age']
-    finally:
-        cursor.close()
-        connection.close()
-        
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(f"SELECT * FROM user_data LIMIT {page_size} OFFSET {offset}")
+    rows = cursor.fetchall()
+    connection.close()
+    return rows
 
-def calculate_average_age():
-    """ Calculate the average age using generator """
-    total_age = 0
-    count = 0
-    for age in stream_user_ages():
-        total_age += age
-        count += 1
-    average_age = total_age / count if count > 0 else 0
-    print(f"Average age of users: {average_age}")
+
+def lazy_pagination(page_size):
+    """Generator that lazily fetches pages one by one"""
+    offset = 0
+    while True:
+        page = paginate_users(page_size, offset)
+        if not page:
+            break
+        yield page
+        offset += page_size
