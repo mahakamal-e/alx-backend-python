@@ -1,6 +1,7 @@
 import sqlite3 
 import functools
 
+
 def with_db_connection(func):
     """Automatically handles opening and closing database connections.""" 
     @functools.wraps(func)
