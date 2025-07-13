@@ -27,11 +27,11 @@ class ExcuteQuery:
             self.connection.close()
     
     
-    if __name__ == "__main__":
-        db_name = "db.db"
-        query = "SELECT * FROM users WHERE age > ?"
-        parm = 25
-        
-        with ExcuteQuery(db_name, query, parm) as result:
-            for row in result:
-                print(row)
+if __name__ == "__main__":
+    db_name = "db.db"
+    query = "SELECT * FROM users WHERE age > ?"
+    parm = 25
+    
+    with ExcuteQuery(db_name, query, parm) as result:
+        for row in result:
+            print(row)
