@@ -2,7 +2,7 @@
 import sqlite3
 
 
-class ExcuteQuery:
+class ExecuteQuery:
     """Create a Reusable context manager takes query as input,
     and executes it"""
     def __init__(self, db_name, query, parm):
@@ -32,6 +32,6 @@ if __name__ == "__main__":
     query = "SELECT * FROM users WHERE age > ?"
     parm = 25
     
-    with ExcuteQuery(db_name, query, parm) as result:
+    with ExecuteQuery(db_name, query, parm) as result:
         for row in result:
             print(row)
