@@ -1,7 +1,7 @@
 from rest_framework import viewsets, filters
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
-
+from rest_framework import status
 """
 This file defines viewsets for conversations and messages.
 It uses Django REST Framework's ModelViewSet to automatically provide 
