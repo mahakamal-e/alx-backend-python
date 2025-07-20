@@ -42,6 +42,18 @@ class TestGithubOrgClient(unittest.TestCase):
         mocked_fxn.assert_called_once_with(
             "https://api.github.com/orgs/{}".format(org)
         )
+    
+    def test_has_license(self):
+        """Test that has_license returns True only for correct license."""
+        client = GithubOrgClient("google")
+
+        repo_with_license = {'license': {'key': 'mit'}}
+        repo_without_license = {'license': {'key': 'apache-2.0'}}
+        repo_with_no_license = {}
+
+        self.assertTrue(client.has_license(repo_with_license, 'mit'))
+        self.assertFalse(client.has_license(repo_without_license, 'mit'))
+        self.assertFalse(client.has_license(repo_with_no_license, 'mit'))
 
     def test_public_repos_url(self) -> None:
         """Tests the `_public_repos_url` property of `GithubOrgClient`.
