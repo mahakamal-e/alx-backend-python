@@ -42,7 +42,7 @@ class TestGithubOrgClient(unittest.TestCase):
         mocked_fxn.assert_called_once_with(
             "https://api.github.com/orgs/{}".format(org)
         )
-    
+
     def test_has_license(self):
         """Test that has_license returns True only for correct license."""
         client = GithubOrgClient("google")
