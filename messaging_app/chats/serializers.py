@@ -31,7 +31,8 @@ class ConversationSerializer(serializers.ModelSerializer):
     """
     participants = UserSerializer(many=True, read_only=True)
     messages = serializers.SerializerMethodField()
-
+    topic = serializers.CharField(required=False, allow_blank=True)
+    
     class Meta:
         model = Conversation
         fields = ['id', 'participants', 'messages']
@@ -42,3 +43,10 @@ class ConversationSerializer(serializers.ModelSerializer):
         """
         messages = obj.message_set.all()
         return MessageSerializer(messages, many=True).data
+    
+    def validate_topic(self, value):
+        """validate_<fieldname>() methods to run validation on that specific field.
+        So this validates the topic field"""
+        if "forbidden" in value.lower():
+            raise serializers.ValidationError("Topic contains forbidden word.")
+        return value
