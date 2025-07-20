@@ -38,7 +38,7 @@ class TestGithubOrgClient(unittest.TestCase):
         """
         mocked_fxn.return_value = resp
         gh_org_client = GithubOrgClient(org)
-        self.assertEqual(gh_org_client.org(), resp)
+        self.assertEqual(gh_org_client.org, resp)  # <-- تم التصحيح هنا
         mocked_fxn.assert_called_once_with(
             "https://api.github.com/orgs/{}".format(org)
         )
