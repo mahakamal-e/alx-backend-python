@@ -4,6 +4,7 @@ from .views import ConversationViewSet, MessageViewSet
 
 """
 Register viewsets with DRF router to generate URL patterns automatically.
+This allows us to map URL endpoints to the appropriate viewsets.
 """
 router = DefaultRouter()
 router.register(r'conversations', ConversationViewSet)
