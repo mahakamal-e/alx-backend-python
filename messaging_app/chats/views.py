@@ -1,9 +1,12 @@
 from rest_framework import viewsets, filters, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsParticipantOfConversation
+from .pagination import MessagePagination
+from .filters import MessageFilter  # <-- custom filter for sender/date filtering
 
 """
 This file defines viewsets for conversations and messages.
@@ -46,11 +49,16 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     """
     ViewSet for sending and retrieving messages.
-    Supports filtering by conversation ID.
+    Supports filtering by conversation ID and additional filters (sender/date range).
     """
+    pagination_class = MessagePagination
     serializer_class = MessageSerializer
-    filter_backends = [filters.SearchFilter]
+
+    # Add filtering and searching
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ['conversation__id']
+    filterset_class = MessageFilter  # <-- custom filter for advanced filtering
+
     # Apply custom permission
     permission_classes = [IsAuthenticated, IsParticipantOfConversation]
 
