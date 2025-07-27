@@ -1,9 +1,22 @@
 from rest_framework import permissions
+from .models import Conversation
 
+class IsParticipantOfConversation(permissions.BasePermission):
+    """
+    Custom permission to ensure:
+    - The user is authenticated (handled globally, but double-check here).
+    - The user is a participant in the conversation they are trying to access.
+    """
 
-class IsParticipant(permissions.BasePermission):
-    """
-    Only participants in the conversation are allowed to view its details.
-    """
     def has_object_permission(self, request, view, obj):
-        return request.user in obj.participants.all()
+        """
+        Check if the authenticated user is part of the conversation.
+        Works for Message and Conversation objects.
+        """
+        # If object is a Message, get its conversation
+        if hasattr(obj, 'conversation'):
+            conversation = obj.conversation
+        else:
+            conversation = obj
+
+        return request.user in conversation.participants.all()

@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'chats'
     'rest_framework_simplejwt',
+    'chats',
 ]
 
 REST_FRAMEWORK = {
