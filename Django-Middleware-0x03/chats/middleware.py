@@ -104,7 +104,7 @@ class OffensiveLanguageMiddleware:
 # Restricts access unless the user role is 'admin' or 'moderator'
 # ============================================
 
-class RolePermissionMiddleware:
+class RolepermissionMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
