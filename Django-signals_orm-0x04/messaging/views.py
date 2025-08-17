@@ -13,8 +13,26 @@ def delete_user(request):
     return JsonResponse({"error": "Method not allowed."}, status=400)
 
 
-root_messages = Message.objects.filter(
-    parent_message__isnull=True,
-).filter(
-    models.Q(sender=request.user) | models.Q(receiver=request.user)
-)
+@login_required
+def threaded_conversations(request):
+    # Fetch root messages (no parent) for current user
+    root_messages = Message.objects.filter(
+        parent_message__isnull=True
+    ).filter(
+        Q(sender=request.user) | Q(receiver=request.user)
+    ).select_related('sender', 'receiver') \
+     .prefetch_related('replies__sender', 'replies__receiver')
+
+    # Recursive function to build nested thread
+    def build_thread(message):
+        return {
+            "id": message.id,
+            "sender": message.sender.username,
+            "receiver": message.receiver.username,
+            "content": message.content,
+            "timestamp": message.timestamp,
+            "replies": [build_thread(reply) for reply in message.replies.all()]
+        }
+
+    data = [build_thread(msg) for msg in root_messages]
+    return JsonResponse(data, safe=False)
