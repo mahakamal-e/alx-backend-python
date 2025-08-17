@@ -15,3 +15,17 @@ def log_message_edit(sender, instance, **kwargs):
             )
             instance.edited = True
             
+
+@receiver(post_delete, sender=User)
+def delete_user_related_data(sender, instance, **kwargs):
+    # Delete all messages sent by the user
+    Message.objects.filter(sender=instance).delete()
+    
+    # Delete all messages received by the user
+    Message.objects.filter(receiver=instance).delete()
+
+    
+    # Delete all message histories related to user's messages
+    MessageHistory.objects.filter(message__sender=instance).delete()
+    MessageHistory.objects.filter(message__receiver=instance).delete()
+            
