@@ -1,10 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-
-class UnreadMessagesManager(models.Manager):
-    def for_user(self, user):
-        return self.filter(receiver=user, read=False).only('id', 'sender', 'content', 'timestamp')
+from .managers import UnreadMessagesManager  # import the custom manager
 
 
 class Message(models.Model):
@@ -12,20 +8,19 @@ class Message(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    edited = models.BooleanField(default=False)  # Track edits
-    read = models.BooleanField(default=False)  # Track if message has been read
-
+    edited = models.BooleanField(default=False)
+    read = models.BooleanField(default=False)
     parent_message = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name='replies'  # Access replies via message.replies.all()
+        related_name='replies'
     )
-    # Managers
-    objects = models.Manager()  # default manager
-    unread = UnreadMessagesManager()  # custom manager for unread messages
 
+    # Managers
+    objects = models.Manager()  # default
+    unread = UnreadMessagesManager()  # custom manager
 
     def __str__(self):
         return f"{self.sender} → {self.receiver}: {self.content[:20]}"

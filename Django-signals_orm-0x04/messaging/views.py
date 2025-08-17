@@ -36,3 +36,26 @@ def threaded_conversations(request):
 
     data = [build_thread(msg) for msg in root_messages]
     return JsonResponse(data, safe=False)
+
+
+@login_required
+def unread_messages_api(request):
+    user = request.user
+    # Use the custom manager to get unread messages
+    unread_messages = Message.unread.for_user(user)
+
+    # Build a JSON-serializable list
+    data = [
+        {
+            "id": msg.id,
+            "sender": msg.sender.username,
+            "receiver": msg.receiver.username,
+            "content": msg.content,
+            "timestamp": msg.timestamp.isoformat(),
+            "read": msg.read,
+        }
+        for msg in unread_messages
+    ]
+
+    return JsonResponse(data, safe=False)
+
