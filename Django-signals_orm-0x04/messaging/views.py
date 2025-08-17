@@ -6,8 +6,8 @@ from django.db.models import Q
 
 @login_required
 def delete_user(request):
-    user = request.user
     if request.method == "POST":
+        user = request.user
         user.delete()
         return JsonResponse({"message": "Your account and all associated data have been deleted."})
     return JsonResponse({"error": "Method not allowed."}, status=400)
@@ -42,9 +42,8 @@ def threaded_conversations(request):
 def unread_messages_api(request):
     user = request.user
     # Use the custom manager to get unread messages
-    unread_messages = Message.unread.for_user(user)
+    unread_messages = Message.unread.unread_for_user(user)
 
-    # Build a JSON-serializable list
     data = [
         {
             "id": msg.id,
@@ -58,4 +57,5 @@ def unread_messages_api(request):
     ]
 
     return JsonResponse(data, safe=False)
+
 
