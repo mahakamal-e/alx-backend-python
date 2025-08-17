@@ -41,8 +41,8 @@ def threaded_conversations(request):
 @login_required
 def unread_messages_api(request):
     user = request.user
-    # Use the custom manager to get unread messages
-    unread_messages = Message.unread.unread_for_user(user)
+    # Use the custom manager and optimize query with .only() in the view
+    unread_messages = Message.unread.unread_for_user(user).only('id', 'sender', 'content', 'timestamp', 'read')
 
     data = [
         {
@@ -57,5 +57,3 @@ def unread_messages_api(request):
     ]
 
     return JsonResponse(data, safe=False)
-
-
