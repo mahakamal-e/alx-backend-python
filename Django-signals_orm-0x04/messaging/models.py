@@ -17,7 +17,8 @@ class MessageHistory(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='history')
     old_content = models.TextField()
     edited_at = models.DateTimeField(auto_now_add=True)
+    edited_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return f"History for Message {self.message.id} at {self.edited_at}"
+        return f"History for Message {self.message.id} by {self.edited_by} at {self.edited_at}"
 
