@@ -23,12 +23,7 @@ staticfiles/
 *.log
 *.mo
 
-# Docker
-*.env
-*.dockerignore
-*.pid
-docker-compose.override.yml
-Dockerfile
+
 
 # IDEs / Editors
 .vscode/
