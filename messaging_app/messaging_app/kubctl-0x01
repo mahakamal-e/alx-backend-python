@@ -16,3 +16,7 @@ kubectl get pods
 # 3. Monitor resource usage (requires metrics-server to be installed)
 echo "Checking resource usage..."
 kubectl top pods
+
+# 4. Perform load testing using wrk
+echo "Performing load test using wrk..."
+wrk -t2 -c10 -d10s http://$SERVICE_IP:$PORT/
