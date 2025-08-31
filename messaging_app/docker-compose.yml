@@ -7,7 +7,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: messaging_db
+      MYSQL_DB: messaging_db 
       MYSQL_USER: appuser
       MYSQL_PASSWORD: apppassword
     ports:
@@ -18,7 +18,7 @@ services:
   web:
     build: .
     container_name: messaging_web
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python3 manage.py runserver 0.0.0.0:8000   # تعديل هنا لتوافق الاختبار
     volumes:
       - .:/app
     ports:
