@@ -2,31 +2,38 @@ pipeline {
     agent any
 
     environment {
-        GITHUB_CREDENTIALS = credentials('your-github-credentials-id')
+        // Use the Jenkins credential ID for GitHub authentication
+        GITHUB_CREDENTIALS = credentials('github-token') 
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/YOUR_GITHUB_USERNAME/alx-backend-python.git', credentialsId: "${GITHUB_CREDENTIALS}"
+                // Checkout the 'main' branch from the GitHub repository using credentials
+                git branch: 'main', url: 'https://github.com/mahakamal-e/alx-backend-python.git', credentialsId: "${GITHUB_CREDENTIALS}"
             }
         }
 
         stage('Install Dependencies') {
             steps {
+                // Create a Python virtual environment
                 sh 'python3 -m venv env'
-                sh 'source env/bin/activate && pip install --upgrade pip && pip install -r requirements.txt'
+                
+                // Activate the virtual environment and install dependencies from messaging_app/requirements.txt using pip3
+                sh 'source env/bin/activate && pip3 install --upgrade pip && pip3 install -r messaging_app/requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
+                // Run pytest on the messaging_app directory and generate a JUnit XML report
                 sh 'source env/bin/activate && pytest messaging_app/ --junitxml=report.xml'
             }
         }
 
         stage('Publish Test Report') {
             steps {
+                // Publish the JUnit test report in Jenkins
                 junit 'report.xml'
             }
         }
@@ -34,7 +41,9 @@ pipeline {
 
     post {
         always {
+            // Archive the report artifact so it can be downloaded later
             archiveArtifacts artifacts: 'report.xml', allowEmptyArchive: true
         }
     }
 }
+
