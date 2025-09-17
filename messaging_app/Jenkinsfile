@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+
+    environment {
+        GITHUB_CREDENTIALS = credentials('your-github-credentials-id')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/YOUR_GITHUB_USERNAME/alx-backend-python.git', credentialsId: "${GITHUB_CREDENTIALS}"
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'python3 -m venv env'
+                sh 'source env/bin/activate && pip install --upgrade pip && pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'source env/bin/activate && pytest messaging_app/ --junitxml=report.xml'
+            }
+        }
+
+        stage('Publish Test Report') {
+            steps {
+                junit 'report.xml'
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'report.xml', allowEmptyArchive: true
+        }
+    }
+}
